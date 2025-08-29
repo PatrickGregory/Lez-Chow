@@ -1,6 +1,6 @@
 import { Redirect, Slot } from "expo-router";
 
-const TabLayout = () => {
+const _Layout = () => {
     const isAuthenticated = false; // Replace with your authentication logic
 
     if (!isAuthenticated) return <Redirect href="/sign-in" />
@@ -8,4 +8,4 @@ const TabLayout = () => {
   
 }
 
-export default TabLayout
+export default _Layout
