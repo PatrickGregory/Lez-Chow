@@ -1,5 +1,7 @@
 import CustomInput from '@/components/CustomInput'
 import CustonButton from '@/components/CustonButton'
+import { signIn } from '@/lib/appwrite'
+import * as Sentry from '@sentry/react-native'
 import { Link, router } from 'expo-router'
 import { useState } from 'react'
 import { Alert, Text, View } from 'react-native'
@@ -9,16 +11,17 @@ const SignIn = () => {
   const [form, setForm] = useState({ email: '', password: '' });
 
   const submit = async () => {
-    if (!form.email || !form.password) return Alert.alert('Error', 'Please enter valid email address & password')
+    const { email, password} = form;
+    if (!email || !password) return Alert.alert('Error', 'Please enter valid email address & password')
     setIsSubmitting(true)
 
     try {
-      //Call Appwrite Sign in Function
+      await signIn({email,password});
 
-      Alert.alert('Success', 'User signed in successfully')
       router.replace('/')
     } catch (error: any) {
-      Alert.alert('Error', error.message)
+      Alert.alert('Error', error.message);
+      Sentry.captureEvent(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -47,10 +50,10 @@ const SignIn = () => {
 
       <View className='flex justify-center mt-5 flex-row gap-2'>
         <Text className='base-regular text-gray-100'>
-          Don't have an account?
+          Don't have an account ?
         </Text>
         <Link href='/sign-up' className='base-bold text-primary'>
-          Sign Up
+         Sign up
         </Link>
       </View>
     </View>

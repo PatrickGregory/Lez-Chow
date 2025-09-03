@@ -1,5 +1,7 @@
 import CustomInput from '@/components/CustomInput'
 import CustonButton from '@/components/CustonButton'
+import { createUser } from '@/lib/appwrite'
+import * as Sentry from '@sentry/react-native'
 import { Link, router } from 'expo-router'
 import { useState } from 'react'
 import { Alert, Text, View } from 'react-native'
@@ -9,16 +11,18 @@ const SignUp = () => {
   const [form, setForm] = useState({name:'', email: '', password: '' });
 
   const submit = async () => {
+    const {email,name,password} = form;
+
     if (!form.name || !form.email || !form.password) return Alert.alert('Error', 'Please enter valid email address & password')
     setIsSubmitting(true)
 
     try {
-      //Call Appwrite Sign Up Function
+      await createUser({email, password,name});
 
-      Alert.alert('Success', 'User signed up successfully')
       router.replace('/')
     } catch (error: any) {
       Alert.alert('Error', error.message)
+            Sentry.captureEvent(error);
     } finally {
       setIsSubmitting(false);
     }
